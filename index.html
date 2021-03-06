@@ -1,13 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://kit.fontawesome.com/13af073304.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="style.css">
   <title>covid-19|api</title>
 </head>
-<body>
 
- <script src="covid.js"></script> 
+<body>
+  <!-- <div class="grid-container"> -->
+  <div id="sideContent"></div>
+  <div id="mainContent">
+    <header id="intro">
+      <div id="rightSide">
+        <span id="logo"><i class="fas fa-virus"></i></span>
+        <span id="coronaBoard">CoronaBoard</span>
+      </div>
+      <div id="leftSide">
+        <h2 class="heading">COVID 19</h2>
+        <span>statistical analytics</span>
+      </div>
+    </header>
+    <section id="buttons-container">
+      <div class='RegionalButtons'>
+        <div id="dropDownContainer">
+          <h2 class="byRigion">World Wide & Regional</h2>
+          <select  class="dropdowen" name="rigions">
+            <option class="option" value="World">WORLD</option>
+            <option class="option" value="Americas">Americas</option>
+            <option class="option" value="Asia">Asia</option>
+            <option class="option" value="Africa">Africa</option>
+            <option class="option" value="Europ">Europ</option>
+            <option class="option" value="Australia">Australia</option>
+            <option class="option" value="Antartica">Antartica</option>
+          </select>
+        </div>
+        <div id="buttons">
+          <button id="Confirmed" class="btn upperBtn" > Confirmed Cases</button>
+          <button id="Deaths" class="btn upperBtn">Deaths</button>
+          <button id="Recovered" class="btn upperBtn">Recovered</button>
+          <button id="Critical" class="btn upperBtn">Critical Condition</button>
+        </div>
+      </div>
+      <div class='CountryButtons'>
+        <div id="dropDownContainer">
+          <h1 class="bycountry">COUNTRY</h1>
+          <select onclick="myFunction()" class="dropdowen" name="countries">
+            <!-- <option  value="">All<option>
+          <option  value="">Americas<option>
+          <option  value="">Asia<option>
+          <option  value="">Africa<option>
+          <option  value="">Europ<option>
+          <option  value="">Australia<option>
+          <option  value="">Antartica<option>
+          <option  value="">Link 1<option> -->
+          </select>
+        </div>
+        <div id="buttons">
+          <button id="total-cases" class="btn">total-cases</button>
+          <button id="new-cases" class="btn">new-cases</button>
+          <button id="total-deaths" class="btn">total-deaths</button>
+          <button id="new-deaths" class="btn">new-deaths</button>
+          <button id="total-recovered" class="btn">total-recovered</button>
+          <button id="critical-condition" class="btn">critical-condition</button>
+        </div>
+      </div>
+    </section>
+    <main id="stat-charts">
+      <div class="world-map">
+        <canvas id="myChart"></canvas>
+      </div>
+      <div class="rigionCountry-charts">
+        <div class="char">
+          <canvas id="continentChart"></canvas>
+        </div>
+        <div class="char">
+          <canvas id="countryChart"></canvas>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="covid.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+  <!-- <script src="https://www.gstatic.com/charts/loader.js"></script> -->
 </body>
+
 </html>

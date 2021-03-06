@@ -1,7 +1,62 @@
 const covidBaseEndpoint = `https://corona-api.com/countries`;
 const countryBaseEndpoint = `https://restcountries.herokuapp.com/api/v1`;
 const countryProxy = 'https://api.allorigins.win/raw?url';
-const contrySemple = {
+const continentChart = document.querySelector('#continentChart');
+const myChart = document.querySelector('#myChart');
+const countryChart = document.querySelector('#countryChart');
+const Confirmed = document.querySelector('#Confirmed');
+const Deaths = document.querySelector('#Deaths');
+const recovered = document.querySelector('#recovered');
+const critical = document.querySelector('#critical');
+const new_cases = document.querySelector('#new-cases');
+const total_cases = document.querySelector('#total-cases');
+const total_deaths = document.querySelector('#total-deaths');
+const new_deaths = document.querySelector('#new-deaths');
+const total_recovered = document.querySelector('#total-recovered');
+const critical_condition = document.querySelector('#critical-condition');
+const option = document.querySelector('.option');
+const btn = document.querySelector('.btn');
+const worldBtn = document.querySelector('#buttons')
+
+
+
+
+////////////////// Display Variables ////////////////
+let CovidChartRegion;
+let covidCountryObj = ['test'];
+let NewCountryCovidData = ['test'];
+let Lables = []
+let Values = {
+  Confirmed: [],
+  Deaths: [],
+  Recovered: [],
+  Critical: []
+}
+
+let clearData = () => {
+  console.log('Function Call: Clear Variable Data')
+  covidCountryObj = [];
+  NewCountryCovidData = [];
+  Lables = []
+  Values = {
+    Confirmed: [],
+    Deaths: [],
+    Recovered: [],
+    Critical: []
+  }
+}
+
+let clickState = {
+  Region: 'world',
+  dataType: ''
+}
+
+googleMapValues = [['Country', 'Values']]
+
+
+
+//////////////////  Examples of data points received by API //////////////////
+const ExampleCountryAPIData = {
   "name": {
     "common": "Afghanistan",
     "official": "Islamic Republic of Afghanistan",
@@ -22,83 +77,166 @@ const contrySemple = {
 
   ],
 }
+const ExampleCovidAPIData = {
+  code: "AF",
+  coordinates: { latitude: 33, longitude: 65 },
+  population: 29121286,
+  confirmed: 0,
+  deaths: 0,
 
-// const covidSepel= {
-// code: "AF",
-// coordinates: {latitude: 33, longitude: 65},
-// latest_data: {deaths: 2449, confirmed: 55933, recovered: 49362, critical: 4122, calculated: {…}},
-// name: "Afghanistan",
-// population: 29121286,
-// confirmed: 0,
-// deaths: 0,
+}
 
+//////////////////  Display Data //////////////////
+
+//!!! function that creates chart || Receives ValueArray, LableArray, Options
+
+// var myBarChart = new Chart(ctx, {
+//   type: 'bar',
+//   data: 'data',
+//   options: 'options'
+// });
+
+// Google Chart - Heat map
+// google.charts.load('current', {
+//   'packages': ['geochart'],
+//   'mapsApiKey': 'AIzaSyAWBmU_fCYVJZ4u-2xxwdSWs6BVXr1Tfbk'
+// });
+// google.charts.setOnLoadCallback(drawRegionsMap);
+
+// function drawRegionsMap() {
+//   var data = google.visualization.arrayToDataTable(googleMapValues);
+//   var options = {};
+//   var chart = new google.visualization.GeoChart(document.getElementById('canvas'));
+//   chart.draw(data, options);
 // }
 
 
-//get covid information by contry code
+/// Chart.js 
+CreateChart = (a) => {
+  console.log("Function Call: Create Chart")
+  const ctx = continentChart;
+  const chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'line',
+    // The data for our dataset
+    data: {
+      labels: Lables,
+      datasets: [{
+        label: [`${clickState.dataType} for ${clickState.Region}`],
+        backgroundColor: 'rgb(255, 99, 132)',
+        borderColor: 'rgb(255, 99, 132)',
+        data: Values[clickState.dataType]
+      }]
+    },
+    // Configuration options go here
+    options: {}
+    
+  });
+  return chart;
+};
 
-getCovidCountry = async (Code) => {
-  const base = `https://corona-api.com/countries/${Code}`;
-  const response = await fetch(base);
-  const data = await response.json();
-  return data;
 
 
-  // return {
-  //   name: x.name,
-  //   Confirmed_Cases: x.confirmed,
-  //   Number_of_Deaths: x.deaths,
-  //   Number_of_recovered: x.recovered,
-  //   Number_of_critical_condition: x.critical
-  // }
+//////////////////  Get data from APIs //////////////////
+
+// Function receives URL and returns data after json recovery
+const getAPIData = async (ulr) => {
+  const response = await fetch(ulr);
+  if (response.status !== 200) {
+    throw new Error("Data not available in DS ")
+  }
+  return await response.json();
 }
 
-
-
+//get covid information by contry code
+const getCovidData = async (Code) => {
+  let request = `https://corona-api.com/countries/${Code}`
+  return await getAPIData(request)
+}
 
 // get country name and key-add pull data with all countries+
-const getContenet = async (continent) => {
-  const base = `https://restcountries.herokuapp.com/api/v1/region/`;
-  const query = `${countryProxy}=${base}${continent}`;
-  const response = await fetch(query);
-  const data = await response.json();
-  return data;
-
-
+const getContinent = async (continent = undefined) => {
+  const base = `${countryProxy}=https://restcountries.herokuapp.com/api/v1/`;
+  let query = base;
+  if (continent !== undefined) {
+    query = `${base}region/${continent}`;
+  }
+  return await getAPIData(query);
 }
 
 
-// get user input type of data
 
 
-// get user input area : in html there are buttons for Europ, Asia, America, Africa, Australia, Antartica and All
-// event listiner
-// call function that gets list of codes for the chosen continent
+// sort API data into variables for display || receives list of cca2 codes and returns/updates display variables 
+//!!! async function??? calling this function requires a .then before
+const extractData = (x) => {
+  console.log("Function Call: Extract Data");
+  covidCountryObj.push(
+    {
+      name: x.data.name,
+      Confirmed: x.data.latest_data.confirmed,
+      Deaths: x.data.latest_data.deaths,
+      Recovered: x.data.latest_data.recovered,
+      Critical: x.data.latest_data.critical
+    });
 
-// call function that for each country returns the Covid stats
+  Lables.push(x.data.name);
+  Values.Confirmed.push(x.data.latest_data.confirmed);
+  Values.Deaths.push(x.data.latest_data.deaths);
+  Values.Recovered.push(x.data.latest_data.recovered);
+  Values.Critical.push(x.data.latest_data.critical);
+  googleMapValues.push([x.data.name, x.data.latest_data.confirmed]);
+}
 
 
 
-// function that creates chart if the user requests data for a single country 
+//////////////////  Interface with User  //////////////////
 
 
-// function that creates chart || Receives ValueArray, LableArray, Options
-// var myBarChart = new Chart(ctx, {
-//   type: 'bar',
-//   data: data,
-//   options: options
-// });
+setDataType = (evt)=>{
+  let e = document.querySelector(".dropdowen");
+  clickState.dataType = evt.target.id;
+  clickState.Region = e.value;
+  console.log(clickState.dataType, clickState.Region)
+  applicationEngine();
+}
+// get user input type of data : in html there are buttons for number of cases, deaths, recoveries, etc
+worldBtn.addEventListener('click', setDataType, false);
 
-let covidCountryObj = [];
+function applicationEngine() {
+  console.log("Function Call: applicationEngine");
+  //// Get country list for region requested by user
+  let userRegionRequest = clickState.Region;
+  if (userRegionRequest === 'World') {
+    ////// call function that gets list of codes for all countries
+    region = undefined;
+  } else { region = userRegionRequest };
+  console.log("Function Call: applicationEngine; region: " + region);
+  ////// call function that gets list of codes for the chosen continent
+  getContinent(region)
+    .then(data => {
+      console.log('Function Call: map cca2')
+      return data.map(element => element.cca2);
+    })
+    .then(data => {
+      console.log('Function Call: map getCovidData')
+      clearData();
+      // Get covid data for each country in list and update display variables
+      return data.map(el => getCovidData(el).then(d => {
+        extractData(d)
+      }))
+    })
+    .then((a) => {
+      // drawRegionsMap('myChart');
+     
+      return CreateChart(a);
+     
+    })
 
-
-getContenet('asia').then(data => {
-  return data.map(element => element.cca2);
-}).then(data => {
-  for (let i = 0; i < data.length; i++) {
-    covidCountryObj.push(getCovidCountry(data[i]))
   }
-  return covidCountryObj;
-}).then(covidCountryObj => covidCountryObj.map(elm => elm.object))
-  .then(console.log(covidCountryObj))
+  
 
+
+//// call function that for each country returns the Covid stats
+
+//// function that creates chart if the user requests data for a single country

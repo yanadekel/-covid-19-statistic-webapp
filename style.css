@@ -1,0 +1,163 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body{
+  width: 100vw;
+  height: 100vh;
+}
+
+/* .grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  gap: 0px 0px;
+  grid-template-areas: "sideContent mainContent mainContent mainContent mainContent";
+  height: 100%;
+} */
+
+/* #sideContent {
+  grid-area: sideContent;
+} */
+
+#mainContent {
+  /* grid-area: mainContent; */
+  height:100vh;
+  width: 100vw;
+}
+
+#intro {
+  background-color:#155355 ;
+  display: flex;
+  justify-content: space-between;
+  height: 5%;
+  width: 100%;
+}
+
+#rightSide {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  padding: 5px;
+}
+
+#leftSide {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  padding: 10px; 
+}
+
+span {
+  font-size: 20px;
+}
+
+h2 {
+  padding: 5px;
+  }
+
+#buttons-container {
+  height:20%;
+  background-color: rgb(151, 129, 102);
+}
+
+#dropDownContainer{
+  height: 50%;
+  display:flex;
+ 
+}
+.dropdowen {
+ padding: 0; 
+ margin-left:10px;
+ height: 70%;
+ border-radius: 5px; 
+ background:#DA7B93;
+}
+
+
+
+.RegionalButtons,.CountryButtons{
+  height: 50%;
+}
+
+#buttons{
+  height: 50%;
+  display: flex;
+  justify-content: center;
+}
+.btn {
+  border: none;
+  color:black;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin:-5px 5px;
+  border-radius: 10px;
+  height:100%;
+  width:157px;
+}
+
+#Confirmed{
+  background-color: #2F4454;
+}
+
+#Deaths{
+  background-color:#2E151B ;
+}
+
+#Recovered{
+  background-color:#376E6F ;
+}
+#Critical{
+  background-color: #DA7B93;
+}
+#total-cases{
+  background-color: #1C3334;
+}
+#new-cases{
+  background-color: #2F4454; 
+}
+#total-deaths{
+  background-color:#2E151B ; 
+}
+#new-deaths{
+  background-color: #376E6F;
+}
+#total-recovered{
+  background-color:#DA7B93 ;
+}
+#critical-condition{
+  background-color:#0b2f30 ;
+}
+
+
+#stat-charts{
+ 
+  width: 100%;
+  display: flex;
+  height: 75%;
+
+}
+
+.world-map{
+  background-color: #DA7B93;
+  width:50%;
+ 
+}
+
+.rigionCountry-charts{
+  background-color: #155355 ;
+  width: 50%;
+}
+
+
+
+
+
+
+
+
