@@ -4,8 +4,8 @@ const countryProxy = 'https://api.allorigins.win/raw?url';
 const continentChart = document.querySelector('#continentChart');
 const myChart = document.querySelector('#myChart');
 const countryChart = document.querySelector('#countryChart');
-const Confirmed = document.querySelector('#Confirmed');
-const Deaths = document.querySelector('#Deaths');
+const confirmed = document.querySelector('#confirmed');
+const deaths = document.querySelector('#deaths');
 const recovered = document.querySelector('#recovered');
 const critical = document.querySelector('#critical');
 const new_cases = document.querySelector('#new-cases');
@@ -22,32 +22,31 @@ const worldBtn = document.querySelector('#buttons')
 
 
 ////////////////// Display Variables ////////////////
-let CovidChartRegion;
-let covidCountryObj = ['test'];
-let NewCountryCovidData = ['test'];
-let Lables = []
-let Values = {
-  Confirmed: [],
-  Deaths: [],
-  Recovered: [],
-  Critical: []
+let covidChartRegion;
+let covidCountryObj = [];
+let newCountryCovidData = [];
+let countryLables = []
+let dataArrays = {
+  confirmed: [],
+  deaths: [],
+  recovered: [],
+  critical: []
 }
 
 let clearData = () => {
-  console.log('Function Call: Clear Variable Data')
   covidCountryObj = [];
-  NewCountryCovidData = [];
-  Lables = []
-  Values = {
-    Confirmed: [],
-    Deaths: [],
-    Recovered: [],
-    Critical: []
+  newCountryCovidData = [];
+  countryLables = []
+  dataArrays = {
+    confirmed: [],
+    deaths: [],
+    recovered: [],
+    critical: []
   }
 }
 
 let clickState = {
-  Region: 'world',
+  region: 'world',
   dataType: ''
 }
 
@@ -112,26 +111,39 @@ const ExampleCovidAPIData = {
 
 
 /// Chart.js 
-CreateChart = (a) => {
-  console.log("Function Call: Create Chart")
+createChart = async (a) => {
+  console.log(countryLables);
+  console.log(dataArrays[clickState.dataType]);
+  let d = dataArrays[clickState.dataType];
+  let l = countryLables;
   const ctx = continentChart;
   const chart = new Chart(ctx, {
-    // The type of chart we want to create
     type: 'line',
-    // The data for our dataset
     data: {
-      labels: Lables,
+      labels: l,
       datasets: [{
-        label: [`${clickState.dataType} for ${clickState.Region}`],
+        label: [`${clickState.dataType} for ${clickState.region}`],
+        data: d,
         backgroundColor: 'rgb(255, 99, 132)',
         borderColor: 'rgb(255, 99, 132)',
-        data: Values[clickState.dataType]
       }]
     },
     // Configuration options go here
-    options: {}
-    
+    options: {
+      scales: {
+        xAxes: [{
+          ticks: {
+            beginAtZero: true,
+            autoSkip: false,
+          }
+        }]
+      }
+    }
+
   });
+  await chart;
+  console.log(countryLables);
+  console.log(dataArrays[clickState.dataType]);
   return chart;
 };
 
@@ -140,18 +152,17 @@ CreateChart = (a) => {
 //////////////////  Get data from APIs //////////////////
 
 // Function receives URL and returns data after json recovery
-const getAPIData = async (ulr) => {
-  const response = await fetch(ulr);
+
+
+//get covid information by contry code
+const getCovidData = async (code) => {
+  let request = `https://corona-api.com/countries/${code}`
+  const response = await fetch(request);
   if (response.status !== 200) {
     throw new Error("Data not available in DS ")
   }
-  return await response.json();
-}
-
-//get covid information by contry code
-const getCovidData = async (Code) => {
-  let request = `https://corona-api.com/countries/${Code}`
-  return await getAPIData(request)
+  const data = await response.json();
+  return data;
 }
 
 // get country name and key-add pull data with all countries+
@@ -161,7 +172,12 @@ const getContinent = async (continent = undefined) => {
   if (continent !== undefined) {
     query = `${base}region/${continent}`;
   }
-  return await getAPIData(query);
+  const response = await fetch(query);
+  if (response.status !== 200) {
+    throw new Error("Data not available in DS ")
+  }
+  const data = await response.json();
+  return data;
 }
 
 
@@ -170,21 +186,20 @@ const getContinent = async (continent = undefined) => {
 // sort API data into variables for display || receives list of cca2 codes and returns/updates display variables 
 //!!! async function??? calling this function requires a .then before
 const extractData = (x) => {
-  console.log("Function Call: Extract Data");
   covidCountryObj.push(
     {
       name: x.data.name,
-      Confirmed: x.data.latest_data.confirmed,
-      Deaths: x.data.latest_data.deaths,
-      Recovered: x.data.latest_data.recovered,
-      Critical: x.data.latest_data.critical
+      confirmed: x.data.latest_data.confirmed,
+      deaths: x.data.latest_data.deaths,
+      recovered: x.data.latest_data.recovered,
+      critical: x.data.latest_data.critical
     });
 
-  Lables.push(x.data.name);
-  Values.Confirmed.push(x.data.latest_data.confirmed);
-  Values.Deaths.push(x.data.latest_data.deaths);
-  Values.Recovered.push(x.data.latest_data.recovered);
-  Values.Critical.push(x.data.latest_data.critical);
+  countryLables.push(x.data.name);
+  dataArrays.confirmed.push(x.data.latest_data.confirmed);
+  dataArrays.deaths.push(x.data.latest_data.deaths);
+  dataArrays.recovered.push(x.data.latest_data.recovered);
+  dataArrays.critical.push(x.data.latest_data.critical);
   googleMapValues.push([x.data.name, x.data.latest_data.confirmed]);
 }
 
@@ -193,11 +208,10 @@ const extractData = (x) => {
 //////////////////  Interface with User  //////////////////
 
 
-setDataType = (evt)=>{
+setDataType = (evt) => {
   let e = document.querySelector(".dropdowen");
   clickState.dataType = evt.target.id;
-  clickState.Region = e.value;
-  console.log(clickState.dataType, clickState.Region)
+  clickState.region = e.value;
   applicationEngine();
 }
 // get user input type of data : in html there are buttons for number of cases, deaths, recoveries, etc
@@ -206,35 +220,34 @@ worldBtn.addEventListener('click', setDataType, false);
 function applicationEngine() {
   console.log("Function Call: applicationEngine");
   //// Get country list for region requested by user
-  let userRegionRequest = clickState.Region;
-  if (userRegionRequest === 'World') {
+  if (clickState.region === 'World') {
     ////// call function that gets list of codes for all countries
     region = undefined;
-  } else { region = userRegionRequest };
+  } else { region = clickState.region };
   console.log("Function Call: applicationEngine; region: " + region);
   ////// call function that gets list of codes for the chosen continent
   getContinent(region)
     .then(data => {
-      console.log('Function Call: map cca2')
+
       return data.map(element => element.cca2);
     })
     .then(data => {
-      console.log('Function Call: map getCovidData')
+
       clearData();
       // Get covid data for each country in list and update display variables
       return data.map(el => getCovidData(el).then(d => {
         extractData(d)
+      }).then((a) => {
+        // drawRegionsMap('myChart');
+
+        covidChartRegion = createChart(a)
+
       }))
     })
-    .then((a) => {
-      // drawRegionsMap('myChart');
-     
-      return CreateChart(a);
-     
-    })
 
-  }
-  
+
+}
+
 
 
 //// call function that for each country returns the Covid stats

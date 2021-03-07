@@ -28,7 +28,7 @@ body{
 }
 
 #intro {
-  background-color:#155355 ;
+  background-color:#376E6F ;
   display: flex;
   justify-content: space-between;
   height: 5%;
@@ -61,7 +61,7 @@ h2 {
 
 #buttons-container {
   height:20%;
-  background-color: rgb(151, 129, 102);
+  background-color: rgb(199, 176, 148);
 }
 
 #dropDownContainer{
@@ -101,18 +101,18 @@ h2 {
   width:157px;
 }
 
-#Confirmed{
+#confirmed{
   background-color: #2F4454;
 }
 
-#Deaths{
+#deaths{
   background-color:#2E151B ;
 }
 
-#Recovered{
+#recovered{
   background-color:#376E6F ;
 }
-#Critical{
+#critical{
   background-color: #DA7B93;
 }
 #total-cases{
@@ -150,7 +150,7 @@ h2 {
 }
 
 .rigionCountry-charts{
-  background-color: #155355 ;
+  background-color: #376E6F ;
   width: 50%;
 }
 
