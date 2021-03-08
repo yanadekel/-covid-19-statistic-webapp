@@ -218,13 +218,11 @@ setDataType = (evt) => {
 worldBtn.addEventListener('click', setDataType, false);
 
 function applicationEngine() {
-  console.log("Function Call: applicationEngine");
   //// Get country list for region requested by user
   if (clickState.region === 'World') {
     ////// call function that gets list of codes for all countries
     region = undefined;
   } else { region = clickState.region };
-  console.log("Function Call: applicationEngine; region: " + region);
   ////// call function that gets list of codes for the chosen continent
   getContinent(region)
     .then(data => {
